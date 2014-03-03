@@ -1,4 +1,4 @@
-//El Midaoui Med Ayoub
+//El Midaoui Mohamed Ayoub
 //Bouhjira Youssef
 
 #include <stdio.h>
@@ -44,20 +44,23 @@ sommet *liste_creer(int val)
 }
 
 //fonction qui ajoute une valeur a la fin d'une liste d'arcs
-arc *ajout_arc(arc *cible, arc *a_ajouter)
+arc *ajout_arc(arc *cible, int a, int b, int c)
 {
+    arc *a_ajouter = malloc(sizeof(arc));
+    a_ajouter->s_init = a;
+    a_ajouter->s_term = b;
+    a_ajouter->poids = c;
+    a_ajouter->suiv = NULL;
+    
     if (!cible) return a_ajouter;
     
     arc *tmp = cible;
-    while (tmp)
+    while (tmp->suiv)
     {
         tmp = tmp->suiv;
     }
     
-    tmp->s_init = a_ajouter->s_init;
-    tmp->s_term = a_ajouter->s_term;
-    tmp->poids = a_ajouter->poids;
-    tmp->suiv = NULL;
+    tmp->suiv = a_ajouter;
     return cible;
 }
 
@@ -108,9 +111,18 @@ int chaine_recherche(int a,int b, G graphe)
     courant = graphe.s[i].suiv;
     while(courant)
     {
-        if(chaine_recherche(courant->etiquette, b, graphe) == 1) return 1;
+        int j=0;
+        while((j < graphe.L) && (graphe.s[j].etiquette != courant->etiquette))
+            j++;//passer a l'element suivant
+        
+        if(liste_recherche(b, graphe.s[j].suiv) == 0)//si pas de resultat
+        {
+            //refaire la recherche
+            if(chaine_recherche(courant->etiquette, b, graphe) == 1) return 1;
+        }
         courant = courant->suiv;
     }
+    
     return 0;
 }
 
@@ -212,6 +224,7 @@ sommet *liste_union(sommet *l1, sommet *l2)
     return l_union;
 }
 
+//Fonction qui affiche les sommets d'un graphe et leurs adjoints
 void affichrer_graphe(G graphe)
 {
     int i;
@@ -219,7 +232,7 @@ void affichrer_graphe(G graphe)
     for(i=0; i<graphe.L; i++)
     {
         if(i) printf("\n");
-        printf("Le sommet %d est adjoint a :",graphe.s[i].etiquette);
+        printf("Le sommet %d est adjoint a :", graphe.s[i].etiquette);
         tmp = graphe.s[i].suiv;
         while(tmp)
         {
@@ -231,9 +244,10 @@ void affichrer_graphe(G graphe)
     }
 }
 
-void affichage_arcs(arc *arcs)
+//Fonction qui affiche les arcs d'un graphe qlc
+void affichage_arcs(arc arcs)
 {
-    arc *tmp = arcs;
+    arc *tmp = &arcs;
     while(tmp)
     {
         printf("(%d,%d) ", tmp->s_init, tmp->s_term);
@@ -241,6 +255,16 @@ void affichage_arcs(arc *arcs)
     }
         
 }
+
+//Fonction qui copie une liste de sommets dans une autre
+sommet *sommet_copie(sommet *cible, sommet *a_copier)
+{
+    sommet *crt = a_copier;
+    while(crt) liste_ajout_fin(&cible, crt->etiquette);
+    return cible;
+}
+
+//Fonction principale
 int main()
 {
     char reponse;
@@ -285,44 +309,58 @@ int main()
     affichrer_graphe(graphe);
     
     //Connexite du graphe
-    printf("\n\nConnexite du graphe :\n\n");
+    printf("\n\nConnexite du graphe :\n");
     if(connexite(graphe)==1) printf("Le graphe est connexe !!");
     else printf("Le graphe n'est pas connexe !!");
     
     //Remplissage des arcs
+    int s_init, s_term, s_poids, j;
     char r = 'O';
-    printf("\nRemplissage des arcs (Ordre Croissant):\n");
-    arc *U = malloc(sizeof(arc));
+    printf("\n\nRemplissage des arcs (Ordre Croissant):\n");
+    arc *U = NULL;
+    //arc *courant = &U;
     do{
         printf("Donner un arc (SI,ST,Poid) :");
         getchar();
-        scanf("(%d,%d,%d)", &U->s_init, &U->s_term, &U->poids);
-        getchar();
+        scanf("(%d,%d,%d)", &s_init, &s_term, &s_poids);
+        U = ajout_arc(U, s_init, s_term, s_poids);
         printf("Voulez-vous ajouter un autre arc :");
+        getchar();
         scanf("%c", &r);
     }while(r == 'O');
-    U->suiv = NULL;
-    //Construction de l'arbre minimal
+    
+    //Affichage du graphe pricipal
+    affichage_arcs(*U);
+    
+    //Construction du graphe minimal
     arc *T = NULL;
     
-    //
     //Initialisation des composantes connexes (dans un tableau)
-    sommet cc[100];
-    for(i=0; i<100; i++)
-        cc[i] = *liste_creer(graphe.s[i].etiquette);
+    sommet *cc[100] ;
+    for(j=0; j<100; j++)
+        cc[j] = liste_creer(graphe.s[j].etiquette);
+    
     
     //Algorithme de Kruscal
     arc *tmp = U;
-    while(tmp)
+    while(tmp)//tant que il y a des arcs non exploites
     {
-        if(liste_intersection(&cc[tmp->s_init], &cc[tmp->s_term]))
+        if(!liste_intersection(cc[tmp->s_init], cc[tmp->s_term]))
         {
-            T = ajout_arc(T, tmp);
-            cc[tmp->s_init] = *liste_union(&cc[tmp->s_init], &cc[tmp->s_term]);
-            cc[tmp->s_term] = *liste_union(&cc[tmp->s_init], &cc[tmp->s_term]);
+            //ajout de l'arc dans le graphe minimal
+            T = ajout_arc(T, tmp->s_init, tmp->s_term, tmp->poids);
+            
+            sommet *copie = NULL;
+            copie = sommet_copie(copie, cc[tmp->s_init]);
+            
+            //fucionner les deux composantes C(i)=C(j)=C(i)UC(j)
+            cc[tmp->s_init] = liste_union(cc[tmp->s_init], cc[tmp->s_term]);
+            cc[tmp->s_term] = liste_union(copie, cc[tmp->s_term]);
         }
+        tmp = tmp->suiv;
     }
     
-    //Affichage de l'arbre minimal
-    affichage_arcs(T);
+    //Affichage du chemin minimal
+    printf("\nAffichage du chemin minimal :\n");
+    affichage_arcs(*T);
 }

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>2D09AE45-9EF0-4E24-BE20-1F7FF3B60FE2</string>
+	<key>IDESourceControlProjectName</key>
+	<string>TP2 - Kruskal</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>2146F31F-BF13-4C46-8B26-85B9C49A966B</key>
+		<string>https://github.com/lakhyos/TP2---Kruskal.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>TP2 - Kruskal.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>2146F31F-BF13-4C46-8B26-85B9C49A966B</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/lakhyos/TP2---Kruskal.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>2146F31F-BF13-4C46-8B26-85B9C49A966B</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>2146F31F-BF13-4C46-8B26-85B9C49A966B</string>
+			<key>IDESourceControlWCCName</key>
+			<string>TP2 - Kruskal</string>
+		</dict>
+	</array>
+</dict>
+</plist>
